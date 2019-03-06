@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Collectionareas } from './collectionareas';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Geodata } from './geodata';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +13,22 @@ export class ArcgisService {
 
   private geocodeUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Locators/CompositeLocator/GeocodeServer/findAddressCandidates';
 
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
+    }
+    // return an observable with a user-facing error message
+    return throwError(
+      'Something bad happened; please try again later.');
+  }
+
   getTrashDay(address): Observable<Geodata> {
 
     const headers = new HttpHeaders()
@@ -21,8 +37,10 @@ export class ArcgisService {
       .append('Street', address).append('outSR', '2264')
       .append('f', 'json');
 
-      
-    return this.http.get<Geodata>(encodeURI(this.geocodeUrl));
+    return this.http.get<Geodata>(this.geocodeUrl, {
+      headers,
+      params
+    }).pipe(
+      catchError(this.handleError));
   }
-
 }
