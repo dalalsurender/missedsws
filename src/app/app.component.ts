@@ -8,7 +8,7 @@ import { CityworksSrResponse } from './cityworks-sr-response';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  
+
   constructor(private cityworksService: CityworksService) { }
 
   title = 'missedsws';

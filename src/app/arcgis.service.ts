@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Collectionareas } from './collectionareas';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Geodata } from './geodata';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +11,18 @@ export class ArcgisService {
 
   constructor(private http: HttpClient) { }
 
-  // getTrashDay(data): Observable<Collectionareas> {
+  private geocodeUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Locators/CompositeLocator/GeocodeServer/findAddressCandidates';
 
-  //   let geometry = JSON.stringify(data);
+  getTrashDay(address): Observable<Geodata> {
 
-  //   return this.http.get(encodeURI(this.urlTrashDay + geometry + this.urlparms)).map((res: Response) => res.json())
-  //     .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
-  // }
+    const headers = new HttpHeaders()
+      .append('Content-Type', 'application/x-www-form-urlencoded');
+    const params = new HttpParams()
+      .append('Street', address).append('outSR', '2264')
+      .append('f', 'json');
+
+      
+    return this.http.get<Geodata>(encodeURI(this.geocodeUrl));
+  }
 
 }

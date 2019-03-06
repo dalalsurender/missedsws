@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { CityworksSrResponse } from './cityworks-sr-response';
+import { Observable } from 'rxjs';
+import { Options } from 'selenium-webdriver/edge';
 
 @Injectable({
   providedIn: 'root'
@@ -25,15 +27,14 @@ export class CityworksService {
     comments: 'We moved and started service on 2/28/2019. We don\'t have garbage and recycle bins yet.',
   };
 
-  createServiceRequest() {
+  createServiceRequest(): Observable<CityworksSrResponse> {
 
     const headers = new HttpHeaders()
       .append('Content-Type', 'application/x-www-form-urlencoded');
     const params = new HttpParams()
       .append('token', this.token).append('data', JSON.stringify(this.body));
 
-
-    return this.http.post(this.createSRUrl, {}, {
+    return this.http.post<CityworksSrResponse>(this.createSRUrl, null, {
       headers,
       params
     });
