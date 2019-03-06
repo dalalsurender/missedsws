@@ -1,4 +1,4 @@
-export interface Geodata {
+export interface LocatorResponse {
     displayFieldName: string;
     fieldAliases: FieldAliases;
     geometryType: string;

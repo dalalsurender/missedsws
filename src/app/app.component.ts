@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CityworksService } from './cityworks.service';
 import { CityworksSrResponse } from './cityworks-sr-response';
 import { ArcgisService } from './arcgis.service';
-import { Geodata } from './geodata';
+import { LocatorResponse } from './locator-response';
+import { CityworksAuthResponse } from './cityworks-auth-response';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ export class AppComponent implements OnInit {
 
   title = 'missedsws';
   cwSrResponse: CityworksSrResponse;
-  locaterResponse: Geodata;
+  cwAuthResponse: CityworksAuthResponse;
+  locaterResponse: LocatorResponse;
   address = '1413 scales st';
   error = 'error msg goes here';
 
@@ -27,11 +29,13 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     // this.cityworksService.createServiceRequest().subscribe((data: CityworksSrResponse) => this.cwSrResponse = { ...data });
+    this.cityworksService.getToken().subscribe((data: CityworksAuthResponse) => this.cwAuthResponse = { ...data },
+      error => this.error = error
+    );
 
-    this.arcgisService.getTrashDay(this.address).subscribe((data: Geodata) => this.locaterResponse = { ...data },
+    this.arcgisService.geocode(this.address).subscribe((data: LocatorResponse) => this.locaterResponse = { ...data },
       error => this.error = error // error path
     );
   }
-
 
 }

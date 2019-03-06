@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { Geodata } from './geodata';
+import { LocatorResponse } from './locator-response';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -12,6 +12,23 @@ export class ArcgisService {
   constructor(private http: HttpClient) { }
 
   private geocodeUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Locators/CompositeLocator/GeocodeServer/findAddressCandidates';
+
+  geocode(address): Observable<LocatorResponse> {
+
+    // Headers not needed b/c HttpParams assumes x-www-form-urlencoded
+    //
+    // const headers = new HttpHeaders()
+    //   .append('Content-Type', 'application/x-www-form-urlencoded');
+    const params = new HttpParams()
+      .append('Street', address).append('outSR', '2264')
+      .append('f', 'json');
+
+    return this.http.get<LocatorResponse>(this.geocodeUrl, {
+      // headers,
+      params
+    }).pipe(
+      catchError(this.handleError));
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
@@ -29,18 +46,4 @@ export class ArcgisService {
       'Something bad happened; please try again later.');
   }
 
-  getTrashDay(address): Observable<Geodata> {
-
-    const headers = new HttpHeaders()
-      .append('Content-Type', 'application/x-www-form-urlencoded');
-    const params = new HttpParams()
-      .append('Street', address).append('outSR', '2264')
-      .append('f', 'json');
-
-    return this.http.get<Geodata>(this.geocodeUrl, {
-      headers,
-      params
-    }).pipe(
-      catchError(this.handleError));
-  }
 }
