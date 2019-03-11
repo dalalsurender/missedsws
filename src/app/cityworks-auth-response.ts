@@ -1,12 +1,12 @@
 export interface Value {
-	token: string;
+	Token: string;
 }
 
 export interface CityworksAuthResponse {
-	value: Value;
-	status: number;
-	message?: any;
-	errorMessages: any[];
-	warningMessages: any[];
-	successMessages: any[];
+	Value: Value;
+	Status: number;
+	Message?: any;
+	ErrorMessages: any[];
+	WarningMessages: any[];
+	SuccessMessages: any[];
 }

@@ -1,10 +1,50 @@
-<!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <p>this is the response {{ locaterResponse | json}} </p>
 
-  <br>
-  <p>this is the token {{ cwAuthResponse | json}}</p>
+  <p>token is valid? true/false - {{ token | json }}</p>
 </div>
+
+<form class="example-form" [formGroup]='usersForm' novalidate (ngSubmit)="save(usersForm.value, usersForm.valid)">
+  <mat-button-toggle-group name="collectionTypes" formControlName="problemSid">
+    <mat-button-toggle *ngFor="let problemSid of problemSids">
+      {{problemSid.display}}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <div *ngIf="usersForm.controls.problemSid.value == '263551'">
+    <p>
+      <br />View more information on <a
+        href="http://www.raleighnc.gov/home/content/SolidWaste/Articles/GarbagePreparation.html" target="_blank">Garbage
+        Preparation.</a>
+    </p>
+  </div>
+  <div *ngIf="usersForm.controls.problemSid.value == '263552'">
+    <p>
+      <br />View more information on <a
+        href="http://www.raleighnc.gov/home/content/SolidWaste/Articles/RecyclePages.html" target="_blank">Recycling
+        Preparation.</a>
+    </p>
+  </div>
+  <div *ngIf="usersForm.controls.problemSid.value == '263553'">
+    <p>
+      <br />View more information on <a
+        href="http://www.raleighnc.gov/home/content/SolidWaste/Articles/GarbagePreparation.html" target="_blank">Yard
+        Waste Preparation</a>
+    </p>
+  </div>
+  <h3>Enter the Address of the Missed Pickup Location</h3>
+
+  <mat-form-field class="example-full-width">
+    <input matInput placeholder="Choose a user" [matAutocomplete]="auto" formControlName='addressInput'>
+  </mat-form-field>
+  <span>Your choice is: {{usersForm.get('addressInput').value | json}}</span>
+
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-option *ngIf="isLoading" class="is-loading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </mat-option>
+    <ng-container *ngIf="!isLoading">
+      <mat-option *ngFor="let address of filteredAddresses" [value]="address">
+        <span>{{ address.address }}</span>
+      </mat-option>
+    </ng-container>
+  </mat-autocomplete>
+</form>

@@ -1,5 +1,12 @@
 # Missedsws
 
+https://coraleigh.github.io/missedsws/
+
+via...
+npm i angular-cli-ghpages --save-dev
+ng build --prod --base-href "/missedsws/"
+npx ngh --dir=dist/missedsws
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.4.
 
 ## Development server
