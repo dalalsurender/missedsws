@@ -1,3 +1,5 @@
+// this is not being used anymore as its only for raleigh locator
+
 export interface SpatialReference {
     wkid: number;
     latestWkid: number;

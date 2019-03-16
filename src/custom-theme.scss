@@ -1,28 +1,323 @@
 
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
-@import '~@angular/material/theming';
-// Plus imports for other components in your app.
+// // Custom Theming for Angular Material
+// // For more information: https://material.angular.io/guide/theming
+// @import '~@angular/material/theming';
+// // Plus imports for other components in your app.
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
+// // Include the common styles for Angular Material. We include this here so that you only
+// // have to load a single css file for Angular Material in your app.
+// // Be sure that you only ever include this mixin once!
+// @include mat-core();
+
+// // Define the palettes for your theme using the Material Design palettes available in palette.scss
+// // (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// // hue. Available color palettes: https://material.io/design/color/
+// $missedsws-primary: mat-palette($mat-indigo);
+// $missedsws-accent: mat-palette($mat-pink, A200, A100, A400);
+
+// // The warn palette is optional (defaults to red).
+// $missedsws-warn: mat-palette($mat-red);
+
+// // Create the theme object (a Sass map containing all of the palettes).
+// $missedsws-theme: mat-light-theme($missedsws-primary, $missedsws-accent, $missedsws-warn);
+
+// // Include theme styles for core and each component used in your app.
+// // Alternatively, you can import and @include the theme mixins for each component
+// // that you are using.
+// @include angular-material-theme($missedsws-theme);
+
+
+// // Custom Theming for Angular Material
+// // For more information: https://material.angular.io/guide/theming
+// @import '~@angular/material/theming';
+// // Plus imports for other components in your app.
+
+// // Include the common styles for Angular Material. We include this here so that you only
+// // have to load a single css file for Angular Material in your app.
+// // Be sure that you only ever include this mixin once!
+// @include mat-core();
+
+// // Define the palettes for your theme using the Material Design palettes available in palette.scss
+// // (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// // hue. Available color palettes: https://material.io/design/color/
+// $pucontractors-primary: mat-palette($mat-indigo);
+// $pucontractors-accent: mat-palette($mat-indigo, A200, A100, A400);
+
+// // The warn palette is optional (defaults to red).
+// $pucontractors-warn: mat-palette($mat-red);
+
+// // Create the theme object (a Sass map containing all of the palettes).
+// $pucontractors-theme: mat-light-theme($pucontractors-primary, $pucontractors-accent, $pucontractors-warn);
+
+// // Include theme styles for core and each component used in your app.
+// // Alternatively, you can import and @include the theme mixins for each component
+// // that you are using.
+// @include angular-material-theme($pucontractors-theme);
+
+@import '~@angular/material/theming';
 @include mat-core();
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-$missedsws-primary: mat-palette($mat-indigo);
-$missedsws-accent: mat-palette($mat-pink, A200, A100, A400);
 
-// The warn palette is optional (defaults to red).
-$missedsws-warn: mat-palette($mat-red);
 
-// Create the theme object (a Sass map containing all of the palettes).
-$missedsws-theme: mat-light-theme($missedsws-primary, $missedsws-accent, $missedsws-warn);
+/* For use in src/lib/core/theming/_palette.scss */
+$lightgreen: (
+    50 : #f5f8e8,
+    100 : #e5edc5,
+    200 : #d4e19f,
+    300 : #c3d479,
+    400 : #b6cb5c,
+    500 : #a9c23f,
+    600 : #a2bc39,
+    700 : #98b431,
+    800 : #8fac29,
+    900 : #7e9f1b,
+    A100 : #f4ffd6,
+    A200 : #e7ffa3,
+    A400 : #d9ff70,
+    A700 : #d2ff57,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include angular-material-theme($missedsws-theme);
+$mediumgreen: (
+    50 : #eff5e0,
+    100 : #d7e6b3,
+    200 : #bcd580,
+    300 : #a1c44d,
+    400 : #8cb726,
+    500 : #78aa00,
+    600 : #70a300,
+    700 : #659900,
+    800 : #5b9000,
+    900 : #487f00,
+    A100 : #d5ffad,
+    A200 : #bcff7a,
+    A400 : #a2ff47,
+    A700 : #95ff2d,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
 
+$darkgreen: (
+    50 : #eaf1e6,
+    100 : #c9ddbf,
+    200 : #a6c695,
+    300 : #82af6b,
+    400 : #679d4b,
+    500 : #4c8c2b,
+    600 : #458426,
+    700 : #3c7920,
+    800 : #336f1a,
+    900 : #245c10,
+    A100 : #abff93,
+    A200 : #83ff60,
+    A400 : #5bff2d,
+    A700 : #47ff14,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$forestgreen: (
+    50 : #eaf1e6,
+    100 : #c9ddbf,
+    200 : #a6c695,
+    300 : #82af6b,
+    400 : #679d4b,
+    500 : #4c8c2b,
+    600 : #458426,
+    700 : #3c7920,
+    800 : #336f1a,
+    900 : #245c10,
+    A100 : #abff93,
+    A200 : #83ff60,
+    A400 : #5bff2d,
+    A700 : #47ff14,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+$twilightblue: (
+    50 : #e1e8ed,
+    100 : #b3c6d2,
+    200 : #80a1b5,
+    300 : #4d7b97,
+    400 : #275e80,
+    500 : #01426a,
+    600 : #013c62,
+    700 : #013357,
+    800 : #012b4d,
+    900 : #001d3c,
+    A100 : #72a8ff,
+    A200 : #3f89ff,
+    A400 : #0c6aff,
+    A700 : #005df1,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+
+$skyblue: (
+    50 : #fbfdfe,
+    100 : #f6fafc,
+    200 : #f0f7fa,
+    300 : #e9f4f7,
+    400 : #e5f1f6,
+    500 : #e0eff4,
+    600 : #dcedf3,
+    700 : #d8ebf1,
+    800 : #d3e8ef,
+    900 : #cbe4ec,
+    A100 : #ffffff,
+    A200 : #ffffff,
+    A400 : #ffffff,
+    A700 : #ffffff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+
+
+$my-app-primary: mat-palette($darkgreen);
+$my-app-accent:  mat-palette($twilightblue, 500, 900, A100);
+$my-app-warn:    mat-palette($mediumgreen);
+
+$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
+
+// Define an alternate dark theme.
+$dark-primary: mat-palette($darkgreen);
+$dark-accent:  mat-palette($twilightblue, 500, 900, A100);
+$dark-warn:    mat-palette($mediumgreen);
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+
+   .dark-theme {
+        @include angular-material-theme($dark-theme);
+   }
+  .dark-theme .mat-form-field-ripple{
+        background-color: white;
+        
+        @include angular-material-theme($dark-theme);
+    }
+   .dark-theme.mat-expansion-panel-header{
+        background-color: mat-color($dark-primary) !important;
+        @include angular-material-theme($dark-theme);
+    }   
+
+   .dark-theme.mat-expansion-panel-header.mat-expanded:hover {
+        background-color: mat-color($dark-primary, 400) !important;
+        @include angular-material-theme($dark-theme);      
+    }
+   .dark-theme.mat-expansion-panel-header.mat-expanded:focus {
+        background-color: mat-color($dark-primary, 400) !important;
+        @include angular-material-theme($dark-theme);      
+    }    
+   .dark-theme.mat-expansion-panel-header:hover {
+        background-color: mat-color($dark-primary, 400) !important;
+        @include angular-material-theme($dark-theme);      
+    }
+
+   .dark-theme .mat-form-field.mat-focused.mat-primary .mat-form-field-ripple{
+        background-color: white;
+       
+        @include angular-material-theme($dark-theme);
+    }
+   .dark-theme .mat-form-field.mat-focused.mat-primary .mat-select-arrow{
+        color: white;
+        
+        @include angular-material-theme($dark-theme);
+    }
+
+   .dark-theme .mat-focused.mat-primary {
+        color: white;
+        
+        @include angular-material-theme($dark-theme);       
+    }
+   .dark-theme .mat-select-arrow {
+        color: white;
+        @include angular-material-theme($dark-theme);
+    }
+
+
+@include angular-material-theme($my-app-theme);
