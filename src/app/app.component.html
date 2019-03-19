@@ -64,9 +64,9 @@
           <input matInput class="wider" placeholder="Enter your address" [matAutocomplete]="auto" formControlName='addressInput'>
         </mat-form-field>
         <!-- <span>Your choice is: {{usersForm.get('addressInput').value | json}}</span> -->
-        <p><span>RecycleDay is: {{ recycleDay | json }}</span></p>
-        <p><span>GeoResponse is: {{ geoResponse | json }}</span></p>
-        <p><span>Coordinates is: {{ location | json }}</span></p>
+        <p><span *ngIf="recycleDay">Your Trash and Recycle Collection Day is {{ recycleDay[0].attributes.DAY }}</span></p>
+        <!-- <p><span>GeoResponse is: {{ geoResponse | json }}</span></p> -->
+        <!-- <p><span>Coordinates is: {{ location | json }}</span></p> -->
 
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
           <mat-option *ngIf="isLoading" class="is-loading">

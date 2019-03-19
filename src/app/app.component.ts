@@ -5,13 +5,13 @@ import { ArcgisService } from './arcgis.service';
 import { CityworksAuthResponse } from './cityworks-auth-response';
 import { CityworksValidateTokenResponse } from './cityworks-validate-token-response';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { debounceTime, tap, switchMap, finalize, map, flatMap, switchMapTo, mergeMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, finalize } from 'rxjs/operators';
 import { GeoResponse, Candidate, Location } from './geo-response';
 import { User } from './user';
 import { MatDialog } from '@angular/material';
 import { DialogContentComponent } from './dialog-content/dialog-content.component';
 import * as moment from 'moment';
-import { Collectionareas } from './collectionareas';
+import { Collectionareas, Feature } from './collectionareas';
 import { Suggestion, WorldGeoResponse } from './world-geo-response';
 
 @Component({
@@ -21,7 +21,7 @@ import { Suggestion, WorldGeoResponse } from './world-geo-response';
 })
 export class AppComponent implements OnInit {
   isOdd: boolean;
-  recycleDay: Collectionareas;
+  recycleDay: Feature[];
   isLoading: boolean;
   filteredAddresses: Candidate[] = [];
   usersForm: FormGroup;
@@ -81,7 +81,8 @@ export class AppComponent implements OnInit {
       ).subscribe(data => {
         this.filteredAddresses = data.candidates;
         this.location = this.usersForm.get('addressInput').value.location;
-        this.arcgisService.getTrashDay(this.location).subscribe(x => this.recycleDay = x);
+        this.arcgisService.getTrashDay(this.location).subscribe(collectionDay => this.recycleDay = collectionDay.features);
+        console.log('this.recycleDay = ', this.recycleDay);
       });
 
     this.subForm = this.fb.group({

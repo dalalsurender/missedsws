@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError, GroupedObservable } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { GeoResponse } from './geo-response';
 import { Collectionareas } from './collectionareas';
-import { WorldGeoResponse } from './world-geo-response';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +15,7 @@ export class ArcgisService {
 
   // private esriWorldLocatorUrl = 'http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest';
   private geocodeUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Locators/CompositeLocator/GeocodeServer/findAddressCandidates';
+  private peterLocatorUrl = 'https://cworktstappwv3.ci.raleigh.nc.us:6443/arcgis/rest/services/MAR_Wake_Geocoder/GeocodeServer/findAddressCandidates';
   private esriWorldLocatorUrl = 'http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates';
   private trashDayUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Services/PortalServices/MapServer/12/query';
   collectionAreaExtent = {
@@ -52,10 +52,11 @@ export class ArcgisService {
 
   geocode(address): Observable<GeoResponse> {
     const params = new HttpParams()
-      .append('SingleLine', address).append('category', 'Address').append('searchExtent', JSON.stringify(this.collectionAreaExtent))
-      .append('f', 'json');
+      // .append('SingleLine', address).append('category', 'Address').append('searchExtent', JSON.stringify(this.collectionAreaExtent))
+      // .append('f', 'json').append('outSR', '2264');
+      .append('Street', address).append('f', 'json');
 
-    return this.http.get<GeoResponse>(this.esriWorldLocatorUrl, {
+    return this.http.get<GeoResponse>(this.peterLocatorUrl, {
       params
     }).pipe(
       catchError(this.handleError));
