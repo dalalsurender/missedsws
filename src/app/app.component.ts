@@ -5,7 +5,7 @@ import { ArcgisService } from './arcgis.service';
 import { CityworksAuthResponse } from './cityworks-auth-response';
 import { CityworksValidateTokenResponse } from './cityworks-validate-token-response';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { debounceTime, tap, switchMap, finalize, map } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, finalize, map, flatMap, switchMapTo, mergeMap } from 'rxjs/operators';
 import { GeoResponse, Candidate, Location } from './geo-response';
 import { User } from './user';
 import { MatDialog } from '@angular/material';
@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   isOdd: boolean;
   recycleDay: Collectionareas;
   isLoading: boolean;
-  filteredAddresses: Suggestion[] = [];
+  filteredAddresses: Candidate[] = [];
   usersForm: FormGroup;
   subForm: FormGroup;
   problemSidDisplay: any;
@@ -38,12 +38,9 @@ export class AppComponent implements OnInit {
     { value: '263553', display: 'Yard Waste' },
   ];
   location: Location;
-  coordinates: Candidate;
 
   constructor(private _dialog: MatDialog, private cityworksService: CityworksService,
     private arcgisService: ArcgisService, private fb: FormBuilder) { }
-
-
 
   ngOnInit(): void {
 
@@ -78,24 +75,52 @@ export class AppComponent implements OnInit {
           .pipe(
             finalize(() => {
               this.isLoading = false;
-              // need to get coordinates from Raleigh locator based on address text from Esri World GeoCoder
-              this.arcgisService.geocodeRal(this.usersForm.get('addressInput').value).subscribe(
-                data => 
-                  this.coordinates = data.candidates[0],
-                  error => console.log('Error: ', error),
-                  () => console.log('Do we have ', this.coordinates.location));
             }),
           )
         )
-      )
-      .subscribe(data => this.filteredAddresses = data.suggestions);
+      ).subscribe(data => {
+        this.filteredAddresses = data.candidates;
+        this.location = this.usersForm.get('addressInput').value.location;
+        this.arcgisService.getTrashDay(this.location).subscribe(x => this.recycleDay = x);
+      });
 
     this.subForm = this.fb.group({
       srInputId: ['', [Validators.maxLength(6), Validators.minLength(6), Validators.required]]
     });
+
+  }
+
+  displayFn(address: Candidate) {
+    if (address) {
+      return address.address;
+    }
   }
 
   recycle(val) {
+
+    // this.arcgisService.getTrashDay(address.location).subscribe(day => console.log('the day is ', this.recycleDay = day));
+
+
+    // this.geocodeRal(address) (coords => console.log('inside geocode service', this.coordinates = coords)));
+
+    // this.arcgisService.geocodeRal(val).pipe(
+    //   map(loc => {
+    //     this.coordinates = loc;
+    //     // console.log('the coordinates are ', this.coordinates);
+    //   })
+    // ).subscribe(x => console.log('x is ', x));
+
+
+
+    //   .pipe(flatMap(() => {
+    //   // need to get coordinates from Raleigh locator based on address text from Esri World GeoCoder
+    //   this.arcgisService.geocodeRal(this.usersForm.get('addressInput').value).subscribe(
+    //     data =>
+    //       this.coordinates = data.candidates[0],
+    //     error => console.log('Error: ', error),
+    //     // () => console.log('Do we have coordinates yet? ', this.coordinates.location)
+    //   );
+    // })
 
 
     // console.log('pure field value is ', this.coordinates.location);
@@ -194,10 +219,6 @@ export class AppComponent implements OnInit {
   // getWeek(): any {
   //   this.isOdd = (moment().week() % 2) === 1;
   // }
-
-  displayFn(address: Suggestion) {
-    if (address) { return address.text; }
-  }
 
   save(model: User, isValid: boolean) {
     this.problemSidDisplay = this.usersForm.controls.problemSid.value;

@@ -1,3 +1,5 @@
+import { SpatialReference, Candidate } from './geo-response';
+
 export interface Suggestion {
     text: string;
     magicKey: string;

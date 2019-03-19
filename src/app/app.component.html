@@ -1,10 +1,10 @@
-<!-- <div style="text-align:center">
-  <p>token is valid? true/false - {{ token | json }}</p>
-</div> -->
+ <div style="text-align:center">
+  <!-- <p>token is valid? true/false - {{ token | json }}</p> -->
 
-<mat-toolbar color="primary">
+
+<mat-toolbar color="primary" class="logocontainer">
   <a href="http://www.raleighnc.gov/">
-    <img alt="City of Raleigh Logo" class="logo" src="./assets/City-Seal-BW.png">
+    <img alt="City of Raleigh Logo" class="logo" src="./assets/Raleigh-Logo-Horiz-white.png">
   </a>
   <span>Solid Waste Services Missed Pickup</span>
   <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -66,14 +66,15 @@
         <!-- <span>Your choice is: {{usersForm.get('addressInput').value | json}}</span> -->
         <p><span>RecycleDay is: {{ recycleDay | json }}</span></p>
         <p><span>GeoResponse is: {{ geoResponse | json }}</span></p>
+        <p><span>Coordinates is: {{ location | json }}</span></p>
 
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
           <mat-option *ngIf="isLoading" class="is-loading">
             <mat-spinner diameter="40"></mat-spinner>
           </mat-option>
           <ng-container *ngIf="!isLoading">
-            <mat-option *ngFor="let text of filteredAddresses" [value]="text">
-              <span>{{ text.text }}</span>
+            <mat-option *ngFor="let address of filteredAddresses" [value]="address">
+              <span>{{ address.address }}</span>
             </mat-option>
           </ng-container>
         </mat-autocomplete>
@@ -93,3 +94,5 @@
     </mat-card-actions>
   </mat-card>
 </ng-container>
+
+</div> 

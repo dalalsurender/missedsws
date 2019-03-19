@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, GroupedObservable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { GeoResponse } from './geo-response';
 import { Collectionareas } from './collectionareas';
 import { WorldGeoResponse } from './world-geo-response';
@@ -10,11 +10,13 @@ import { WorldGeoResponse } from './world-geo-response';
   providedIn: 'root'
 })
 export class ArcgisService {
+  coordinates: any;
 
   constructor(private http: HttpClient) { }
 
-  private esriWorldLocatorUrl = 'http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest';
+  // private esriWorldLocatorUrl = 'http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest';
   private geocodeUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Locators/CompositeLocator/GeocodeServer/findAddressCandidates';
+  private esriWorldLocatorUrl = 'http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates';
   private trashDayUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Services/PortalServices/MapServer/12/query';
   collectionAreaExtent = {
     xmin: 2054330.92561337,
@@ -26,23 +28,34 @@ export class ArcgisService {
     }
   };
 
-  geocodeRal(address): Observable<GeoResponse> {
+  geocodeRal(address): any {
     const params = new HttpParams()
       .append('Street', address).append('outSR', '2264')
       .append('f', 'json');
 
-    return this.http.get<GeoResponse>(this.geocodeUrl, {
+    return this.http.get<any>(this.geocodeUrl, {
       params
-    }).pipe(
-      catchError(this.handleError));
+    }).pipe(map((coords) => console.log('inside geocode service', this.coordinates = coords)));
+    // catchError(this.handleError));
   }
 
-  geocode(address): Observable<WorldGeoResponse> {
+  // geocodeRal(address): Observable<GeoResponse> {
+  //   const params = new HttpParams()
+  //     .append('Street', address).append('outSR', '2264')
+  //     .append('f', 'json');
+
+  //   return this.http.get<GeoResponse>(this.geocodeUrl, {
+  //     params
+  //   }).pipe(
+  //     catchError(this.handleError));
+  // }
+
+  geocode(address): Observable<GeoResponse> {
     const params = new HttpParams()
-      .append('text', address).append('category', 'Address').append('searchExtent', JSON.stringify(this.collectionAreaExtent))
+      .append('SingleLine', address).append('category', 'Address').append('searchExtent', JSON.stringify(this.collectionAreaExtent))
       .append('f', 'json');
 
-    return this.http.get<WorldGeoResponse>(this.esriWorldLocatorUrl, {
+    return this.http.get<GeoResponse>(this.esriWorldLocatorUrl, {
       params
     }).pipe(
       catchError(this.handleError));
