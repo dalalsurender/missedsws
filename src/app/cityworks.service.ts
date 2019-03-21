@@ -24,7 +24,8 @@ export class CityworksService {
   // ?data={%22LoginName%22:%22coraleigh/cwsoa%22,%22Password%22:%22Z3%40b741M%23r%21%22}`
 
   private cwValTokenUrl = `https://cityworkstest.raleighnc.gov/cityworkstest/Services/General/Authentication/Validate`;
-  private valTstToken = { token: `eyJFbXBsb3llZVNpZCI6MjY1MTk2LCJJc3N1ZWRUaW1lIjoxNTUxODkyMDk1NzY5LCJMb2dpbk5hbWUiOiJDV1NPQ
+  private valTstToken = {
+    token: `eyJFbXBsb3llZVNpZCI6MjY1MTk2LCJJc3N1ZWRUaW1lIjoxNTUxODkyMDk1NzY5LCJMb2dpbk5hbWUiOiJDV1NPQ
   SIsIlNpZ25hdHVyZSI6IkxWMTBHa2VTc1Nmc2xHcUZwN1I1Y1AzMW9sN1Q4b3M3bDF4c0crT2NvdzQ9IiwiVG9rZW4iOiJqQTczcEJqcVlR
   U1pLWkhTMU1xcUJETm9ISzRmQ1VFYm90SUMxcmt4MHVnPSJ9`};
 
@@ -33,7 +34,7 @@ export class CityworksService {
   U1pLWkhTMU1xcUJETm9ISzRmQ1VFYm90SUMxcmt4MHVnPSJ9`;
 
   // private createSRUrl = 'http://cworkprdappwv1/admin/Services/AMS/ServiceRequest/Create';
-  private createSRUrl = 'https://cityworkstest.raleighnc.gov/cityworkstest/Services/AMS/ServiceRequest/Create';
+  private cityworksSRUrl = 'https://cityworkstest.raleighnc.gov/cityworkstest/Services/AMS/ServiceRequest/';
   // private prdToken = `eyJFbXBsb3llZVNpZCI6MjY1MTk2LCJJc3N1ZWRUaW1lIjoxNTUxNzM2MTEwOTYyLCJMb2dpbk5hbWUiOiJDV1NP
   // QSIsIlNpZ25hdHVyZSI6IlFDMWNrN1kwWlUyZEdOejVuTHM4c21HZnIxaVhGcHR2V0xYc2NrL05PUWc9IiwiVG9rZW4iOiJ2aVB2YjhJVUEyc
   // WphSEl5Yk01NlB4ekhTUWU2M3pVT0xDQ2xMbjl0U0tFPSJ9`;
@@ -78,10 +79,22 @@ export class CityworksService {
       .append('token', this.tstToken).append('data', JSON.stringify(this.body));
 
     // body parameter is null since all data is in url parameters aka HttpParams
-    return this.http.post<CityworksSrResponse>(this.createSRUrl, null, {
+    return this.http.post<CityworksSrResponse>(`${this.cityworksSRUrl}Create`, null, {
       params
     }).pipe(
       catchError(this.handleError));
+  }
+
+  getServiceRequest(requestId: any): Observable<CityworksSrResponse> {
+    
+    const params = new HttpParams()
+      .append('token', this.tstToken).append('data', JSON.stringify(requestId));
+
+    return this.http.post<CityworksSrResponse>(`${this.cityworksSRUrl}ById`, null, {
+      params
+    }).pipe(
+      catchError(this.handleError));
+
   }
 
   private handleError(error: HttpErrorResponse) {

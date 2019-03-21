@@ -38,6 +38,13 @@ export class AppComponent implements OnInit {
     { value: '263553', display: 'Yard Waste' },
   ];
   location: Location;
+  ckSrStatussubmitted: boolean;
+  authResponse: any;
+  srStatus: any;
+  prjCompleteDate: any;
+  prjCompleteStr: any;
+  srNotFound: boolean;
+  options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
   constructor(private _dialog: MatDialog, private cityworksService: CityworksService,
     private arcgisService: ArcgisService, private fb: FormBuilder) { }
@@ -53,9 +60,8 @@ export class AppComponent implements OnInit {
     this.usersForm = this.fb.group({
       addressInput: [null, Validators.required],
       problemSid: [null, Validators.required],
-      callerHomePhone: ['', [Validators.required, Validators.pattern(PHONE_REGEX)]],
-      callerEmail: ['', Validators.email],
-      callerFirstName: [''],
+      callerHomePhone: [null, [Validators.required, Validators.pattern(PHONE_REGEX)]],
+      callerEmail: [null, Validators.email],
       comments: ['']
     });
 
@@ -96,6 +102,32 @@ export class AppComponent implements OnInit {
       return address.address;
     }
   }
+
+  checkSRStatus() {
+    this.ckSrStatussubmitted = true;
+    let requestId = { RequestId: this.subForm.get('srInputId').value };
+    this.cityworksService.getServiceRequest(requestId).subscribe(data => this.authResponse = data,
+      err => console.error(err),
+      () => {
+        this.ckSrStatussubmitted = true;
+        if (this.authResponse.WarningMessages.length < 1) {
+          this.srStatus = this.authResponse.Value.Status;
+          if (this.srStatus === 'INPROG') {
+            this.srStatus = 'In Progress';
+          }
+          if (this.srStatus === 'CLOSED') {
+            this.srStatus = 'Completed';
+          }
+          this.prjCompleteDate = this.authResponse.Value.PrjCompleteDate;
+          this.prjCompleteDate = new Date(this.authResponse.Value.PrjCompleteDate);
+          this.prjCompleteStr = this.prjCompleteDate.toLocaleDateString('en-US', this.options);
+
+        } else {
+          this.srNotFound = true;
+        }
+      });
+  }
+
 
   recycle(val) {
 
@@ -156,7 +188,7 @@ export class AppComponent implements OnInit {
     //             this.testCandidates.splice(0);
     //           }
     //         }
-    //         // this.getWeek(this.collectionareas.features[0].attributes.WEEK); 
+    //         // this.getWeek(this.collectionareas.features[0].attributes.WEEK);
 
     //       },
     //       err => console.error(err),

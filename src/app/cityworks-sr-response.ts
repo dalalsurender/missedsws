@@ -104,7 +104,7 @@ export interface Value {
 export interface CityworksSrResponse {
     value: Value;
     status: number;
-    message?: any; F
+    message?: any;
     errorMessages: any[];
     warningMessages: any[];
     successMessages: any[];
