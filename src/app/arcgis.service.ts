@@ -15,7 +15,7 @@ export class ArcgisService {
 
   // private esriWorldLocatorUrl = 'http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/suggest';
   private geocodeUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Locators/CompositeLocator/GeocodeServer/findAddressCandidates';
-  private peterLocatorUrl = 'https://cworktstappwv3.ci.raleigh.nc.us:6443/arcgis/rest/services/MAR_Wake_Geocoder/GeocodeServer/findAddressCandidates';
+  private peterLocatorUrl = 'https://cityworksgisprd.raleighnc.gov/arcgis/rest/services/MAR_Wake_Geocoder/GeocodeServer/findAddressCandidates';
   private esriWorldLocatorUrl = 'http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates';
   private trashDayUrl = 'https://maps.raleighnc.gov/arcgis/rest/services/Services/PortalServices/MapServer/12/query';
   collectionAreaExtent = {

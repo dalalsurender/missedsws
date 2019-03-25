@@ -23,7 +23,7 @@
     <mat-card>
       <mat-card-header>
         <mat-card-title>
-          <h2>What was missed?</h2>
+          What was missed?
         </mat-card-title>
       </mat-card-header>
       <mat-card-content>
@@ -34,8 +34,8 @@
               {{problemSid.display}}
             </mat-button-toggle>
           </mat-button-toggle-group>
-          <mat-error *ngIf="usersForm.controls.problemSid.hasError">
-            Please select one
+          <mat-error *ngIf="usersForm.controls.problemSid.hasError('required')">
+            Please select a category
           </mat-error>
           <div *ngIf="usersForm.controls.problemSid.value == '263551'">
             <p>
@@ -66,9 +66,15 @@
           <mat-form-field class="example-full-width">
             <input matInput class="wider" placeholder="Enter your address" [matAutocomplete]="auto"
               formControlName='addressInput'>
+              <mat-error *ngIf="usersForm.controls.addressInput.hasError('required') && (usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched)">
+                Please enter an address within Raleigh city limits
+              </mat-error>
           </mat-form-field>
           <!-- <span>Your choice is: {{usersForm.get('addressInput').value | json}}</span> -->
-          <p><span *ngIf="recycleDay">Your Trash and Recycle Collection Day is {{ recycleDay[0].attributes.DAY }}</span>
+
+          <p><span *ngIf="usersForm.invalid && (usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched)">Your Trash and Recycle Collection Day is {{ day }}</span>
+
+          <!-- <p><span *ngIf="recycleDay.length && usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched">Your Trash and Recycle Collection Day is {{ day }}</span> -->
           </p>
           <!-- <p><span>GeoResponse is: {{ geoResponse | json }}</span></p> -->
           <!-- <p><span>Coordinates is: {{ location | json }}</span></p> -->
@@ -83,15 +89,7 @@
               </mat-option>
             </ng-container>
           </mat-autocomplete>
-          <p>
-            <mat-form-field class="wide"
-              hintLabel='Email is optional: Enter your email to recieve updates on your request'>
-              <input matInput type="text" formControlName="callerEmail" placeholder="Email Address">
-              <mat-error *ngIf="usersForm.controls.callerEmail.hasError">
-                Please enter a valid email address
-              </mat-error>
-            </mat-form-field>
-          </p>
+
           <mat-form-field class="wide">
             <input matInput placeholder="Enter your phone number" formControlName='callerHomePhone'>
             <mat-error *ngIf="usersForm.controls.callerHomePhone.hasError('pattern')">
@@ -101,6 +99,15 @@
               Phone number is required
             </mat-error>
           </mat-form-field>
+          <p>
+              <mat-form-field class="wide"
+                hintLabel='Email is optional: Enter your email to recieve updates on your request'>
+                <input matInput type="text" formControlName="callerEmail" placeholder="Email Address">
+                <mat-error *ngIf="usersForm.controls.callerEmail.hasError && (usersForm.get('callerEmail').dirty || usersForm.get('callerEmail').touched)">
+                  Please enter a valid email address
+                </mat-error>
+              </mat-form-field>
+            </p>
           <p>
             <mat-form-field class="wide">
               <textarea matInput type="text" class="wide" formControlName="comments" placeholder="Comments"></textarea>

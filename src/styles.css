@@ -13,12 +13,11 @@
 /* html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
 
-
-
 body {
     margin: 0;
     font-family: Roboto, sans-serif;
 }
+
 
 chf {
     text-align: center;
@@ -36,6 +35,11 @@ mat-card {
 
 .mat-card-header {
     text-align: center;
+}
+
+.mat-card-header-text {
+    text-align: center;
+    width: 100%;
 }
 
 mat-toolbar-row {

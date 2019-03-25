@@ -13,6 +13,7 @@ import { DialogContentComponent } from './dialog-content/dialog-content.componen
 import * as moment from 'moment';
 import { Collectionareas, Feature } from './collectionareas';
 import { Suggestion, WorldGeoResponse } from './world-geo-response';
+import { Attribute } from '@angular/compiler';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,7 @@ import { Suggestion, WorldGeoResponse } from './world-geo-response';
 })
 export class AppComponent implements OnInit {
   isOdd: boolean;
-  recycleDay: Feature[];
+  recycleDay: Feature[] = [];
   isLoading: boolean;
   filteredAddresses: Candidate[] = [];
   usersForm: FormGroup;
@@ -45,6 +46,7 @@ export class AppComponent implements OnInit {
   prjCompleteStr: any;
   srNotFound: boolean;
   options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  day: string;
 
   constructor(private _dialog: MatDialog, private cityworksService: CityworksService,
     private arcgisService: ArcgisService, private fb: FormBuilder) { }
@@ -87,7 +89,16 @@ export class AppComponent implements OnInit {
       ).subscribe(data => {
         this.filteredAddresses = data.candidates;
         this.location = this.usersForm.get('addressInput').value.location;
-        this.arcgisService.getTrashDay(this.location).subscribe(collectionDay => this.recycleDay = collectionDay.features);
+        // Todo: if features array is empty, populate recycleDay with a friendly error message
+        this.arcgisService.getTrashDay(this.location).subscribe(
+          collectionDay => {
+            if (collectionDay.features.length === 1) {
+              this.day = collectionDay.features[0].attributes.DAY;
+              this.recycleDay = collectionDay.features;
+            } else {
+              this.day = 'not found. You can continue to submit and your pickup location will be investigated.';
+            }
+          });
         console.log('this.recycleDay = ', this.recycleDay);
       });
 
