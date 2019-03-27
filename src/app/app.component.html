@@ -28,7 +28,7 @@
       </mat-card-header>
       <mat-card-content>
         <form class="example-form" [formGroup]='usersForm' novalidate
-          (ngSubmit)="save(usersForm.value, usersForm.valid)">
+          (ngSubmit)="save(usersForm.value, usersForm.valid)" autocomplete="off">
           <mat-button-toggle-group name="collectionTypes" formControlName="problemSid">
             <mat-button-toggle *ngFor="let problemSid of problemSids" [value]="problemSid.value" required>
               {{problemSid.display}}
@@ -122,7 +122,7 @@
           </p>
           <p>
             <mat-form-field class="wide"
-              hintLabel='Email is optional: Enter your email to recieve updates on your request'>
+              hintLabel='Email is optional: Enter your email to recieve status updates on your request'>
               <input matInput type="text" formControlName="callerEmail" placeholder="Email Address">
               <mat-error
                 *ngIf="usersForm.controls.callerEmail.hasError && (usersForm.get('callerEmail').dirty || usersForm.get('callerEmail').touched)">
