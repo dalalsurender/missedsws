@@ -1,4 +1,4 @@
-export interface User {
+export class CityworksSrRequest {
     callerFirstName: string;
     callerLastName: string;
     callerAddress: string;
@@ -6,7 +6,7 @@ export interface User {
     callerCity: string;
     callerZip: string;
     address: string;
-    callerWorkPhone: string;
+    callerHomePhone: string;
     callerEmail?: string;
     problemSid: string;
     callerComments?: string;

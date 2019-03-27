@@ -1,5 +1,5 @@
 export interface Value {
-    requestId: number;
+    RequestId: number;
     domainId: number;
     projectSid: number;
     problemCode: string;
@@ -98,14 +98,15 @@ export interface Value {
     closedBySid: number;
     dispatchToSid: number;
     dispatchOpenBySid: number;
-    isClosed: boolean;
+    IsClosed: boolean;
 }
 
+// TODO capitalize all here since json2ts plugin lowers everything and CWAPI is mixed
 export interface CityworksSrResponse {
-    value: Value;
-    status: number;
-    message?: any;
-    errorMessages: any[];
-    warningMessages: any[];
-    successMessages: any[];
+    Value: Value;
+    Status: number;
+    Message?: any;
+    ErrorMessages: any[];
+    WarningMessages: any[];
+    SuccessMessages: any[];
 }

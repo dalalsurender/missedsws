@@ -53,6 +53,7 @@
                 Preparation.</a>
             </p>
           </div>
+
           <div *ngIf="usersForm.controls.problemSid.value == '263553'">
             <p>
               <br />View more information on <a
@@ -66,66 +67,87 @@
           <mat-form-field class="example-full-width">
             <input matInput class="wider" placeholder="Enter your address" [matAutocomplete]="auto"
               formControlName='addressInput'>
-              <mat-error *ngIf="usersForm.controls.addressInput.hasError('required') && (usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched)">
-                Please enter an address within Raleigh city limits
-              </mat-error>
+            <mat-error
+              *ngIf="usersForm.controls.addressInput.hasError('required') && (usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched)">
+              Please enter an address within Raleigh city limits
+            </mat-error>
           </mat-form-field>
           <!-- <span>Your choice is: {{usersForm.get('addressInput').value | json}}</span> -->
 
-          <p><span *ngIf="usersForm.invalid && (usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched)">Your Trash and Recycle Collection Day is {{ day }}</span>
+          <span *ngIf="day && !addressNotFound">Your
+            trash and recycling collection day is {{ day }}. {{isRecyclingWeek}} "{{week}}".</span>
+
+          <p style="color: red;" *ngIf="usersForm.controls.problemSid.value == '263552' && isNotRecyclingWeek">
+            You have selected a missed pickup for recycling, but your recycling service is not scheduled
+            for this week. Residential recycling is collected every other week. You can continue to 
+            submit a request if you think your recycling pickup was missed.
+          </p>
+
+          <a *ngIf="(week === 'A') && !addressNotFound">
+            Download your <a href="http://www.raleighnc.gov/content/SolidWaste/Documents/SWRecyclingCalendarAWeek.pdf"
+              target="_blank">recycling calendar</a> for week "A".
+
+          </a>
+          <a *ngIf="(week === 'B') && !addressNotFound">
+            Download your <a href="http://www.raleighnc.gov/content/SolidWaste/Documents/SWRecyclingCalendarBWeek.pdf"
+              target="_blank">recycling calendar</a> for week "B".
+          </a>
+
+          <span *ngIf="addressNotFound">Your address was not found. You can continue to submit and your pickup location
+            will be investigated</span>
 
           <!-- <p><span *ngIf="recycleDay.length && usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched">Your Trash and Recycle Collection Day is {{ day }}</span> -->
-          </p>
-          <!-- <p><span>GeoResponse is: {{ geoResponse | json }}</span></p> -->
-          <!-- <p><span>Coordinates is: {{ location | json }}</span></p> -->
 
-          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
-            <mat-option *ngIf="isLoading" class="is-loading">
-              <mat-spinner diameter="40"></mat-spinner>
-            </mat-option>
-            <ng-container *ngIf="!isLoading">
-              <mat-option *ngFor="let address of filteredAddresses" [value]="address">
-                <span>{{ address.address }}</span>
-              </mat-option>
-            </ng-container>
-          </mat-autocomplete>
-
-          <mat-form-field class="wide">
-            <input matInput placeholder="Enter your phone number" formControlName='callerHomePhone'>
-            <mat-error *ngIf="usersForm.controls.callerHomePhone.hasError('pattern')">
-              Please enter a valid phone number
-            </mat-error>
-            <mat-error *ngIf="usersForm.controls.callerHomePhone.hasError('required')">
-              Phone number is required
-            </mat-error>
-          </mat-form-field>
           <p>
-              <mat-form-field class="wide"
-                hintLabel='Email is optional: Enter your email to recieve updates on your request'>
-                <input matInput type="text" formControlName="callerEmail" placeholder="Email Address">
-                <mat-error *ngIf="usersForm.controls.callerEmail.hasError && (usersForm.get('callerEmail').dirty || usersForm.get('callerEmail').touched)">
-                  Please enter a valid email address
-                </mat-error>
-              </mat-form-field>
-            </p>
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
+              <mat-option *ngIf="isLoading" class="is-loading">
+                <mat-spinner diameter="40"></mat-spinner>
+              </mat-option>
+              <ng-container *ngIf="!isLoading">
+                <mat-option *ngFor="let address of filteredAddresses" [value]="address">
+                  <span>{{ address.address }}</span>
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+
+            <mat-form-field class="wide">
+              <input matInput placeholder="Enter your phone number" formControlName='callerHomePhone'>
+              <mat-error *ngIf="usersForm.controls.callerHomePhone.hasError('pattern')">
+                Please enter a valid phone number
+              </mat-error>
+              <mat-error *ngIf="usersForm.controls.callerHomePhone.hasError('required')">
+                Phone number is required
+              </mat-error>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field class="wide"
+              hintLabel='Email is optional: Enter your email to recieve updates on your request'>
+              <input matInput type="text" formControlName="callerEmail" placeholder="Email Address">
+              <mat-error
+                *ngIf="usersForm.controls.callerEmail.hasError && (usersForm.get('callerEmail').dirty || usersForm.get('callerEmail').touched)">
+                Please enter a valid email address
+              </mat-error>
+            </mat-form-field>
+          </p>
           <p>
             <mat-form-field class="wide">
               <textarea matInput type="text" class="wide" formControlName="comments" placeholder="Comments"></textarea>
             </mat-form-field>
           </p>
         </form>
-        <mat-progress-bar *ngIf="!isDone && submitted && !displayHttpError" class="app-progress" mode="indeterminate"
+        <!-- <mat-progress-bar *ngIf="!isDone && submitted && !displayHttpError" class="app-progress" mode="indeterminate" -->
+        <mat-progress-bar *ngIf="submitted" class="app-progress" mode="indeterminate"
           aria-label="Indeterminate progress-bar example"></mat-progress-bar>
-        <div>
-          {{displayHttpError}}
-        </div>
+        <span *ngIf="reqid">Your service request ID is {{reqid}}. Your {{problemSidDisplay}} will be collected
+          within two business days, not including weekends. Your container(s) must be at the curb from
+          7am to 5pm each day until collected. We apologize for any inconvenience.</span>
       </mat-card-content>
-
       <mat-card-actions style="margin:0 auto;" class="map-mat-card">
         <form class="map-mat-card" [formGroup]="usersForm" novalidate
           (ngSubmit)="save(usersForm.value, usersForm.valid)">
           <button mat-raised-button color="primary" type="submit" class="btn btn-success"
-            [disabled]="!usersForm.valid || isDone">Submit</button>
+            [disabled]="!usersForm.valid || reqid">Submit</button>
         </form>
       </mat-card-actions>
     </mat-card>
@@ -143,20 +165,20 @@
         </mat-form-field>
         <br>
         <br>
-        <mat-progress-bar *ngIf="ckSrStatussubmitted && !submitted && srStatus.length < 1 && !srNotFound"
-          class="app-progress" mode="indeterminate" aria-label="Indeterminate progress-bar example">
+        <mat-progress-bar *ngIf="ckSrStatussubmitted" class="app-progress" mode="indeterminate"
+          aria-label="Indeterminate progress-bar example">
         </mat-progress-bar>
         <p *ngIf="srNotFound">Could not find any Service Requests with that ID.</p>
-        <p *ngIf="srStatus != '' && !srNotFound">You Service Request is in '{{srStatus}}' status.</p>
-        <div *ngIf="srStatus != 'Completed' && srStatus != '' && srStatus != 'CLOSED'">Your requested item will be
+        <p *ngIf="srStatus">You Service Request is in '{{srStatus}}' status.</p>
+        <div *ngIf="srStatus != 'Completed' && srStatus && srStatus != 'CLOSED'">Your requested item will be
           collected within two business days, not including weekends.</div>
 
       </form>
     </mat-card-content>
     <!-- <mat-card-actions style="margin:0 auto;" class="map-mat-card"> -->
     <form class="map-mat-card" [formGroup]="subForm" novalidate (ngSubmit)="checkSRStatus()">
-      <button mat-raised-button color="primary" type="submit" class="btn btn-success"
-        [disabled]="!subForm.valid || submitted">Submit</button>
+      <button mat-raised-button color="primary" class="btn btn-success"
+        [disabled]="!subForm.valid || srStatus || srNotFound">Submit</button>
     </form>
     <!-- </mat-card-actions> -->
 

@@ -73,10 +73,11 @@ export class CityworksService {
       catchError(this.handleError));
   }
 
-  createServiceRequest(): Observable<CityworksSrResponse> {
+  createServiceRequest(request): Observable<CityworksSrResponse> {
 
+    console.log('request inside the service is ', JSON.stringify(request));
     const params = new HttpParams()
-      .append('token', this.tstToken).append('data', JSON.stringify(this.body));
+      .append('token', this.tstToken).append('data', JSON.stringify(request));
 
     // body parameter is null since all data is in url parameters aka HttpParams
     return this.http.post<CityworksSrResponse>(`${this.cityworksSRUrl}Create`, null, {
@@ -86,7 +87,7 @@ export class CityworksService {
   }
 
   getServiceRequest(requestId: any): Observable<CityworksSrResponse> {
-    
+
     const params = new HttpParams()
       .append('token', this.tstToken).append('data', JSON.stringify(requestId));
 

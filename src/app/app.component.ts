@@ -7,7 +7,7 @@ import { CityworksValidateTokenResponse } from './cityworks-validate-token-respo
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, tap, switchMap, finalize } from 'rxjs/operators';
 import { GeoResponse, Candidate, Location } from './geo-response';
-import { User } from './user';
+import { CityworksSrRequest } from './cityworks-sr-request';
 import { MatDialog } from '@angular/material';
 import { DialogContentComponent } from './dialog-content/dialog-content.component';
 import * as moment from 'moment';
@@ -47,11 +47,21 @@ export class AppComponent implements OnInit {
   srNotFound: boolean;
   options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   day: string;
+  cwSrResponse: CityworksSrResponse;
+  submitted: boolean;
+  reqid: number;
+  week: string;
+  isRecyclingWeek: string;
+  cnt: number;
+  addressNotFound: boolean;
+  isNotRecyclingWeek: boolean;
 
   constructor(private _dialog: MatDialog, private cityworksService: CityworksService,
     private arcgisService: ArcgisService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
+
+    this.isOdd = (moment().week() % 2) === 1;
 
     this.cityworksService.getToken().subscribe(
       (data: CityworksAuthResponse) => this.token = data.Value.Token,
@@ -78,7 +88,11 @@ export class AppComponent implements OnInit {
       .valueChanges
       .pipe(
         debounceTime(300),
-        tap(() => this.isLoading = true),
+        tap(() => {
+          this.isLoading = true;
+          this.addressNotFound = false;
+          // this.isNotRecyclingWeek = false;
+        }),
         switchMap(value => this.arcgisService.geocode(value)
           .pipe(
             finalize(() => {
@@ -89,17 +103,29 @@ export class AppComponent implements OnInit {
       ).subscribe(data => {
         this.filteredAddresses = data.candidates;
         this.location = this.usersForm.get('addressInput').value.location;
-        // Todo: if features array is empty, populate recycleDay with a friendly error message
         this.arcgisService.getTrashDay(this.location).subscribe(
           collectionDay => {
             if (collectionDay.features.length === 1) {
               this.day = collectionDay.features[0].attributes.DAY;
-              this.recycleDay = collectionDay.features;
+              this.week = collectionDay.features[0].attributes.WEEK;
+              if (this.week === 'A' && this.isOdd) {
+                this.isRecyclingWeek = 'This week is your Recycling week. Your recycling week is week';
+                this.isNotRecyclingWeek = false;
+              } else if (this.week === 'B' && !this.isOdd) {
+                this.isRecyclingWeek = 'This week is your Recycling week. Your recycling week is week';
+                this.isNotRecyclingWeek = false;
+              } else if (this.week === undefined) {
+                this.isRecyclingWeek = 'This week is not your Recycling week';
+                this.isNotRecyclingWeek = true;
+              } else {
+                this.isRecyclingWeek = 'This week is not your Recycling week. Your recycling week is week';
+                this.isNotRecyclingWeek = true;
+              }
             } else {
-              this.day = 'not found. You can continue to submit and your pickup location will be investigated.';
+              this.addressNotFound = true;
             }
           });
-        console.log('this.recycleDay = ', this.recycleDay);
+        // console.log('this.recycleDay = ', this.recycleDay);
       });
 
     this.subForm = this.fb.group({
@@ -116,11 +142,11 @@ export class AppComponent implements OnInit {
 
   checkSRStatus() {
     this.ckSrStatussubmitted = true;
-    let requestId = { RequestId: this.subForm.get('srInputId').value };
+    const requestId = { RequestId: this.subForm.get('srInputId').value };
     this.cityworksService.getServiceRequest(requestId).subscribe(data => this.authResponse = data,
       err => console.error(err),
       () => {
-        this.ckSrStatussubmitted = true;
+        this.ckSrStatussubmitted = false;
         if (this.authResponse.WarningMessages.length < 1) {
           this.srStatus = this.authResponse.Value.Status;
           if (this.srStatus === 'INPROG') {
@@ -129,9 +155,9 @@ export class AppComponent implements OnInit {
           if (this.srStatus === 'CLOSED') {
             this.srStatus = 'Completed';
           }
-          this.prjCompleteDate = this.authResponse.Value.PrjCompleteDate;
-          this.prjCompleteDate = new Date(this.authResponse.Value.PrjCompleteDate);
-          this.prjCompleteStr = this.prjCompleteDate.toLocaleDateString('en-US', this.options);
+          // this.prjCompleteDate = this.authResponse.Value.PrjCompleteDate;
+          // this.prjCompleteDate = new Date(this.authResponse.Value.PrjCompleteDate);
+          // this.prjCompleteStr = this.prjCompleteDate.toLocaleDateString('en-US', this.options);
 
         } else {
           this.srNotFound = true;
@@ -139,132 +165,9 @@ export class AppComponent implements OnInit {
       });
   }
 
+  save(model: any, isValid: boolean) {
+    this.submitted = true;
 
-  recycle(val) {
-
-    // this.arcgisService.getTrashDay(address.location).subscribe(day => console.log('the day is ', this.recycleDay = day));
-
-
-    // this.geocodeRal(address) (coords => console.log('inside geocode service', this.coordinates = coords)));
-
-    // this.arcgisService.geocodeRal(val).pipe(
-    //   map(loc => {
-    //     this.coordinates = loc;
-    //     // console.log('the coordinates are ', this.coordinates);
-    //   })
-    // ).subscribe(x => console.log('x is ', x));
-
-
-
-    //   .pipe(flatMap(() => {
-    //   // need to get coordinates from Raleigh locator based on address text from Esri World GeoCoder
-    //   this.arcgisService.geocodeRal(this.usersForm.get('addressInput').value).subscribe(
-    //     data =>
-    //       this.coordinates = data.candidates[0],
-    //     error => console.log('Error: ', error),
-    //     // () => console.log('Do we have coordinates yet? ', this.coordinates.location)
-    //   );
-    // })
-
-
-    // console.log('pure field value is ', this.coordinates.location);
-    // if (this.coordinates.location !== undefined) {
-    //   this.arcgisService.getTrashDay(this.coordinates.location).subscribe(
-    //     data => {
-    //       this.recycleDay = data;
-    //       // this.getWeek();
-    //       console.log('finalized switchmap field value is ', this.recycleDay);
-    //     }
-    //   );
-    // } else {
-    //   // user did not select from drop down
-    //   console.log('else condition field value is ', val);
-    //   this.arcgisService.geocode(val).subscribe(location => this.worldGeoResponse = location);
-    // }
-
-    // this.arcgisService.getTrashDay('')
-
-    // for (const addressEntry in this.testCandidates) {
-    //   if (this.testCandidates[addressEntry].address === this.myForm.get('callerAddress').value) {
-    //     // console.log('we have a match on address, heres its coordinates', this.testCandidates[addressEntry].location);
-    //     // console.log('addressEntry', addressEntry);
-    //     this.geocodeService.getTrashDay(this.testCandidates[addressEntry].location).subscribe(
-    //       data => {
-    //         this.collectionareas = data;
-    //         for (var i = 0; i < this.collectionareas.features.length; i++) {
-    //           if (this.collectionareas.features[i].attributes.WEEK) {
-    //             this.newweek = this.collectionareas.features[i].attributes.WEEK;
-    //             // console.log('newweek in if = ', this.newweek);
-    //             this.getWeek(this.newweek);
-    //             this.testCandidates.splice(0);
-    //           }
-    //         }
-    //         // this.getWeek(this.collectionareas.features[0].attributes.WEEK);
-
-    //       },
-    //       err => console.error(err),
-    //       () => {
-    //         //console.log('done inside getTrashday call', this.week = this.collectionareas.features[0].attributes.WEEK);
-
-    //         // console.log('newweek below is = ', this.newweek);
-    //         if (this.newweek === 'A' && this.isOdd) {
-    //           this.isRecyclingWeek = 'This week is your Recycling week. Your week is week';
-    //           this.isNotRecyclingWeek = false;
-    //         } else if (this.newweek === 'B' && !this.isOdd) {
-    //           this.isRecyclingWeek = 'This week is your Recycling week. Your week is week';
-    //           this.isNotRecyclingWeek = false;
-    //         } else if (this.newweek === undefined) {
-    //           this.msg = '';
-    //           this.isRecyclingWeek = 'This week is not your Recycling week.' + this.msg;
-    //           this.isNotRecyclingWeek = true;
-    //         } else {
-    //           this.isRecyclingWeek = 'This week is not your Recycling week. Your week is week';
-    //           this.isNotRecyclingWeek = true;
-    //         }
-    //       });
-    //   } else {
-
-    //     this.geocodeService.getTrashDay(this.testCandidates[addressEntry].location).subscribe(
-    //       data => {
-    //         this.collectionareas = data;
-    //         for (var i = 0; i < this.collectionareas.features.length; i++) {
-    //           if (this.collectionareas.features[i].attributes.WEEK) {
-    //             this.newweek = this.collectionareas.features[i].attributes.WEEK;
-    //             // console.log('newweek in else = ', this.newweek);
-    //             this.getWeek(this.newweek);
-    //             this.testCandidates.splice(0);
-    //           }
-    //         }
-    //       },
-    //       err => console.error(err),
-    //       () => {
-    //         // console.log('done inside getTrashday call', this.week = this.collectionareas.features[0].attributes.WEEK);
-    //         // console.log('newweek below is = ', this.newweek);
-    //         if (this.newweek === 'A' && this.isOdd) {
-    //           this.isRecyclingWeek = 'This week is your Recycling week. Your week is week';
-    //           this.isNotRecyclingWeek = false;
-    //         } else if (this.newweek === 'B' && !this.isOdd) {
-    //           this.isRecyclingWeek = 'This week is your Recycling week. Your week is week';
-    //           this.isNotRecyclingWeek = false;
-    //         } else if (this.newweek === undefined) {
-    //           this.msg = '';
-    //           this.isRecyclingWeek = 'This week is not your Recycling week.' + this.msg;
-    //           this.isNotRecyclingWeek = true;
-    //         } else {
-    //           this.isRecyclingWeek = 'This week is not your Recycling week. Your week is week';
-    //           this.isNotRecyclingWeek = true;
-    //         }
-
-    //       });
-    //   }
-    // }
-  }
-
-  // getWeek(): any {
-  //   this.isOdd = (moment().week() % 2) === 1;
-  // }
-
-  save(model: User, isValid: boolean) {
     this.problemSidDisplay = this.usersForm.controls.problemSid.value;
     if (this.problemSidDisplay === '263551') {
       this.problemSidDisplay = 'Garbage';
@@ -273,6 +176,30 @@ export class AppComponent implements OnInit {
     } else if (this.problemSidDisplay === '263553') {
       this.problemSidDisplay = 'Yard Waste';
     }
+
+    // console.log('model is ', JSON.stringify(model));
+
+    const request = new CityworksSrRequest();
+    request.address = model.addressInput.address;
+    request.callerAddress = model.addressInput.address;
+    request.callerCity = 'Raleigh';
+    request.comments = model.comments;
+    request.callerEmail = model.callerEmail;
+    request.callerHomePhone = model.callerHomePhone;
+    request.problemSid = model.problemSid;
+    request.x = JSON.stringify(model.addressInput.location.x);
+    request.y = JSON.stringify(model.addressInput.location.y);
+
+    this.cityworksService.createServiceRequest(request).subscribe((data: CityworksSrResponse) => {
+      this.cwSrResponse = {
+        ...data
+      };
+      this.submitted = false;
+      this.reqid = this.cwSrResponse.Value.RequestId;
+      // console.log('reqid1 = ', this.cwSrResponse.Value.RequestId);
+
+    });
+
   }
 
   openDialog(page: string) {
