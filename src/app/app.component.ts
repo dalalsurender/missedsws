@@ -77,9 +77,9 @@ export class AppComponent implements OnInit {
       comments: ['']
     });
 
-    this.subForm = this.fb.group({
-      srInputId: ['', [Validators.maxLength(6), Validators.minLength(6), Validators.required]]
-    });
+    // this.subForm = this.fb.group({
+    //   srInputId: ['', [Validators.maxLength(6), Validators.minLength(6), Validators.required]]
+    // });
 
     // this.usersForm.get('addressInput').valueChanges.subscribe(value => this.recycle(value));
 
@@ -130,7 +130,7 @@ export class AppComponent implements OnInit {
       });
 
     this.subForm = this.fb.group({
-      srInputId: ['', [Validators.maxLength(6), Validators.minLength(6), Validators.required]]
+      srInputId: [null, [Validators.maxLength(6), Validators.minLength(6), Validators.required]]
     });
 
   }
@@ -162,6 +162,7 @@ export class AppComponent implements OnInit {
 
         } else {
           this.srNotFound = true;
+          this.srStatus = undefined;
         }
       });
   }
