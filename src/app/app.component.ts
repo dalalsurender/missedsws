@@ -123,6 +123,7 @@ export class AppComponent implements OnInit {
               }
             } else {
               this.addressNotFound = true;
+              this.day = undefined;
             }
           });
         // console.log('this.recycleDay = ', this.recycleDay);

@@ -77,7 +77,7 @@
           <span *ngIf="day && !addressNotFound">Your
             trash and recycling collection day is {{ day }}. {{isRecyclingWeek}} "{{week}}".</span>
 
-          <p style="color: red;" *ngIf="usersForm.controls.problemSid.value == '263552' && isNotRecyclingWeek">
+          <p style="color: red;" *ngIf="usersForm.controls.problemSid.value == '263552' && isNotRecyclingWeek && day && !addressNotFound">
             You have selected a missed pickup for recycling, but your recycling service is not scheduled
             for this week. Residential recycling is collected every other week. You can continue to 
             submit a request if you think your recycling pickup was missed.
@@ -93,8 +93,7 @@
               target="_blank">recycling calendar</a> for week "B".
           </a>
 
-          <span *ngIf="addressNotFound">Your address was not found. You can continue to submit and your pickup location
-            will be investigated</span>
+          <span *ngIf="addressNotFound && day">Your address was not found. You can still continue to submit a service request.</span>
 
           <!-- <p><span *ngIf="recycleDay.length && usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched">Your Trash and Recycle Collection Day is {{ day }}</span> -->
 
