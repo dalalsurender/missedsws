@@ -11,9 +11,8 @@ import { CityworksSrRequest } from './cityworks-sr-request';
 import { MatDialog } from '@angular/material';
 import { DialogContentComponent } from './dialog-content/dialog-content.component';
 import * as moment from 'moment';
-import { Collectionareas, Feature } from './collectionareas';
-import { Suggestion, WorldGeoResponse } from './world-geo-response';
-import { Attribute } from '@angular/compiler';
+import { Feature } from './collectionareas';
+import { WorldGeoResponse } from './world-geo-response';
 
 @Component({
   selector: 'app-root',
@@ -40,7 +39,7 @@ export class AppComponent implements OnInit {
   ];
   location: Location;
   ckSrStatussubmitted: boolean;
-  authResponse: any;
+  // authResponse: any;
   srStatus: any;
   prjCompleteDate: any;
   prjCompleteStr: any;
@@ -57,31 +56,28 @@ export class AppComponent implements OnInit {
   isNotRecyclingWeek: boolean;
 
   constructor(private _dialog: MatDialog, private cityworksService: CityworksService,
-    private arcgisService: ArcgisService, private fb: FormBuilder) { }
+              private arcgisService: ArcgisService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
 
     this.isOdd = (moment().week() % 2) === 1;
 
     this.cityworksService.getToken().subscribe(
-      (data: CityworksAuthResponse) => this.token = data.Value.Token,
+      (data: CityworksAuthResponse) => {
+        this.token = data.Value.Token;
+        // use token for createRequest?
+      },
       error => this.error = error
     );
 
     const PHONE_REGEX = /^\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/;
     this.usersForm = this.fb.group({
-      addressInput: [null, Validators.required],
+      addressInput: [null, [Validators.required, Validators.maxLength(150)]],
       problemSid: [null, Validators.required],
       callerHomePhone: [null, [Validators.required, Validators.pattern(PHONE_REGEX)]],
       callerEmail: [null, Validators.email],
-      comments: ['']
+      comments: ['', Validators.maxLength(150)]
     });
-
-    // this.subForm = this.fb.group({
-    //   srInputId: ['', [Validators.maxLength(6), Validators.minLength(6), Validators.required]]
-    // });
-
-    // this.usersForm.get('addressInput').valueChanges.subscribe(value => this.recycle(value));
 
     this.usersForm
       .get('addressInput')
@@ -91,7 +87,6 @@ export class AppComponent implements OnInit {
         tap(() => {
           this.isLoading = true;
           this.addressNotFound = false;
-          // this.isNotRecyclingWeek = false;
         }),
         switchMap(value => this.arcgisService.geocode(value)
           .pipe(
@@ -126,11 +121,11 @@ export class AppComponent implements OnInit {
               this.day = undefined;
             }
           });
-        // console.log('this.recycleDay = ', this.recycleDay);
       });
 
+    const numericOnly = '^(0|[1-9][0-9]*)$';
     this.subForm = this.fb.group({
-      srInputId: [null, [Validators.maxLength(6), Validators.minLength(6), Validators.required]]
+      srInputId: [null, [Validators.maxLength(6), Validators.minLength(6), Validators.required, Validators.pattern(numericOnly)]]
     });
 
   }
@@ -144,22 +139,21 @@ export class AppComponent implements OnInit {
   checkSRStatus() {
     this.ckSrStatussubmitted = true;
     const requestId = { RequestId: this.subForm.get('srInputId').value };
-    this.cityworksService.getServiceRequest(requestId).subscribe(data => this.authResponse = data,
+    this.cityworksService.getServiceRequest(requestId).subscribe(data => this.cwSrResponse = data,
       err => console.error(err),
       () => {
         this.ckSrStatussubmitted = false;
-        if (this.authResponse.WarningMessages.length < 1) {
-          this.srStatus = this.authResponse.Value.Status;
+        if (this.cwSrResponse.WarningMessages.length < 1 && this.cwSrResponse.ErrorMessages.length < 1) {
+          this.srStatus = this.cwSrResponse.Value.Status;
           if (this.srStatus === 'INPROG') {
             this.srStatus = 'In Progress';
           }
           if (this.srStatus === 'CLOSED') {
             this.srStatus = 'Completed';
           }
-          // this.prjCompleteDate = this.authResponse.Value.PrjCompleteDate;
-          // this.prjCompleteDate = new Date(this.authResponse.Value.PrjCompleteDate);
-          // this.prjCompleteStr = this.prjCompleteDate.toLocaleDateString('en-US', this.options);
-
+          if (this.srStatus === 'CANCEL') {
+            this.srStatus = 'Cancelled';
+          }
         } else {
           this.srNotFound = true;
           this.srStatus = undefined;
@@ -179,8 +173,6 @@ export class AppComponent implements OnInit {
       this.problemSidDisplay = 'Yard Waste';
     }
 
-    // console.log('model is ', JSON.stringify(model));
-
     const request = new CityworksSrRequest();
     request.address = model.addressInput.address;
     request.callerAddress = model.addressInput.address;
@@ -198,8 +190,6 @@ export class AppComponent implements OnInit {
       };
       this.submitted = false;
       this.reqid = this.cwSrResponse.Value.RequestId;
-      // console.log('reqid1 = ', this.cwSrResponse.Value.RequestId);
-
     });
 
   }
@@ -215,20 +205,6 @@ export class AppComponent implements OnInit {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // geocodedAddress: Candidate[];
 
