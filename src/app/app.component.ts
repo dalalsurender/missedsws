@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
   isNotRecyclingWeek: boolean;
 
   constructor(private _dialog: MatDialog, private cityworksService: CityworksService,
-              private arcgisService: ArcgisService, private fb: FormBuilder) { }
+    private arcgisService: ArcgisService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
 
@@ -206,36 +206,18 @@ export class AppComponent implements OnInit {
 
 }
 
-// geocodedAddress: Candidate[];
-
-// tokenIsValid: boolean;
+  // tokenIsValid: boolean;
   // cwSrResponse: CityworksSrResponse;
   // cwAuthResponse: CityworksAuthResponse;
   // cwAuthValResponse: CityworksValidateTokenResponse;
 
-
-    // this.arcgisService.geocode(this.address).subscribe(
-    //   (mydata: GeoResponse) => {
-    //     return this.geocodedAddress = mydata.candidates;
-    //   },
-    //   error => this.error = error // error path
-    // );
-
-    // this.cityworksService.validateToken().subscribe(
-    //   (data: CityworksValidateTokenResponse) => {
-    //     this.tokenIsValid = data.Value;
-    //     if (!this.tokenIsValid) {
-
-    //     }
-    //   },
-    //   error => {
-    //     this.error = error;
-    //   }
-    // );
-
-    // this.cityworksService.createServiceRequest().subscribe((data: CityworksSrResponse) => this.cwSrResponse = { ...data });
-    // console.log('before getToken');
-
-    // this.arcgisService.geocode(this.address).subscribe((data: LocatorResponse) => this.locaterResponse = { ...data },
-    //   error => this.error = error // error path
-    // );
+  // this.cityworksService.validateToken().subscribe(
+  //   (data: CityworksValidateTokenResponse) => {
+  //     this.tokenIsValid = data.Value;
+  //     if (!this.tokenIsValid) {
+  //     }
+  //   },
+  //   error => {
+  //     this.error = error;
+  //   }
+  // );

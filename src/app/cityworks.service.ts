@@ -15,32 +15,24 @@ export class CityworksService {
 
   constructor(private http: HttpClient) { }
 
-  // private cwAuthUrl = `http://cworkprdappwv1/admin/services/Ams/Authentication/Authenticate?data={%2
-  // 2LoginName%22:%22cwsoa%22,%22Password%22:%22cwsoa1%22}`;
+  // private tstToken = environment.token;
   private cwAuthUrl = `https://cityworkstest.raleighnc.gov/cityworkstest/services/Ams/Authentication/Authenticate`;
-  // login = {
-  //   LoginName: `coraleigh/seeclickfix`,
-  //   Password: `ts%dWLc%XaSB`
-  // };
-
-  private tstToken = environment.token;
-
   private cwValTokenUrl = `https://cityworkstest.raleighnc.gov/cityworkstest/Services/General/Authentication/Validate`;
   private cityworksSRUrl = 'https://cityworkstest.raleighnc.gov/cityworkstest/Services/AMS/ServiceRequest/';
 
-  validateToken(): Observable<CityworksValidateTokenResponse> {
-    const params = new HttpParams()
-      .append('data', JSON.stringify(this.tstToken));
+  // validateToken(): Observable<CityworksValidateTokenResponse> {
+  //   const params = new HttpParams()
+  //     .append('data', JSON.stringify(this.tstToken));
 
-    return this.http.post<CityworksValidateTokenResponse>(this.cwValTokenUrl, null, {
-      params
-    }).pipe(
-      catchError(this.handleError));
-  }
+  //   return this.http.post<CityworksValidateTokenResponse>(this.cwValTokenUrl, null, {
+  //     params
+  //   }).pipe(
+  //     catchError(this.handleError));
+  // }
 
   getToken(): Observable<CityworksAuthResponse> {
-    const login = {LoginName: environment.user, Password: environment.password};
-      // , environment.Password}
+    const login = { LoginName: environment.user, Password: environment.password };
+    // , environment.Password}
     const params = new HttpParams()
       .append('data', JSON.stringify(login));
 
