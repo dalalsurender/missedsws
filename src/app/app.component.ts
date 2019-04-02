@@ -72,11 +72,11 @@ export class AppComponent implements OnInit {
 
     const PHONE_REGEX = /^\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/;
     this.usersForm = this.fb.group({
-      addressInput: [null, [Validators.required, Validators.maxLength(150)]],
+      addressInput: [null, [Validators.required, Validators.maxLength(149)]],
       problemSid: [null, Validators.required],
       callerHomePhone: [null, [Validators.required, Validators.pattern(PHONE_REGEX)]],
       callerEmail: [null, Validators.email],
-      comments: ['', Validators.maxLength(150)]
+      comments: ['', Validators.maxLength(374)]
     });
 
     this.usersForm
@@ -139,7 +139,7 @@ export class AppComponent implements OnInit {
   checkSRStatus() {
     this.ckSrStatussubmitted = true;
     const requestId = { RequestId: this.subForm.get('srInputId').value };
-    this.cityworksService.getServiceRequest(requestId).subscribe(data => this.cwSrResponse = data,
+    this.cityworksService.getServiceRequest(requestId, this.token).subscribe(data => this.cwSrResponse = data,
       err => console.error(err),
       () => {
         this.ckSrStatussubmitted = false;
@@ -184,7 +184,7 @@ export class AppComponent implements OnInit {
     request.x = JSON.stringify(model.addressInput.location.x);
     request.y = JSON.stringify(model.addressInput.location.y);
 
-    this.cityworksService.createServiceRequest(request).subscribe((data: CityworksSrResponse) => {
+    this.cityworksService.createServiceRequest(request, this.token).subscribe((data: CityworksSrResponse) => {
       this.cwSrResponse = {
         ...data
       };

@@ -65,12 +65,16 @@
           <h3>Enter the Address of the Missed Pickup Location</h3>
 
           <mat-form-field class="example-full-width">
-            <input matInput class="wider" placeholder="Enter your address" [matAutocomplete]="auto"
+            <input matInput class="wider" maxlength="150" placeholder="Enter your address" [matAutocomplete]="auto"
               formControlName='addressInput'>
             <mat-error
               *ngIf="usersForm.controls.addressInput.hasError('required') && (usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched)">
               Please enter an address within Raleigh city limits
             </mat-error>
+            <mat-error
+            *ngIf="usersForm.controls.addressInput.hasError('maxlength')">
+            Maximum length is 150 characters
+          </mat-error>
           </mat-form-field>
           <!-- <span>Your choice is: {{usersForm.get('addressInput').value | json}}</span> -->
 
@@ -130,7 +134,11 @@
           </p>
           <p>
             <mat-form-field class="wide">
-              <textarea matInput type="text" class="wide" formControlName="comments" placeholder="Comments"></textarea>
+              <textarea matInput type="text" maxlength="375" class="wide" formControlName="comments" placeholder="Comments"></textarea>
+              <mat-error
+                *ngIf="usersForm.controls.comments.hasError('maxlength')">
+                Maximum length is 375 characters
+              </mat-error>
             </mat-form-field>
           </p>
         </form>
