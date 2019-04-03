@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   geoResponse: GeoResponse;
   worldGeoResponse: WorldGeoResponse;
   address = '1413 scales st';
-  error = 'error msg goes here';
+  error;
   token: string;
   public problemSids = [
     { value: '263551', display: 'Garbage' },
@@ -140,7 +140,7 @@ export class AppComponent implements OnInit {
     this.ckSrStatussubmitted = true;
     const requestId = { RequestId: this.subForm.get('srInputId').value };
     this.cityworksService.getServiceRequest(requestId, this.token).subscribe(data => this.cwSrResponse = data,
-      err => console.error(err),
+      err => this.error = err,
       () => {
         this.ckSrStatussubmitted = false;
         if (this.cwSrResponse.WarningMessages.length < 1 && this.cwSrResponse.ErrorMessages.length < 1) {
@@ -190,7 +190,9 @@ export class AppComponent implements OnInit {
       };
       this.submitted = false;
       this.reqid = this.cwSrResponse.Value.RequestId;
-    });
+
+    }, err => this.error = err
+    );
 
   }
 

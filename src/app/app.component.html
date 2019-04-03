@@ -71,10 +71,9 @@
               *ngIf="usersForm.controls.addressInput.hasError('required') && (usersForm.get('addressInput').dirty || usersForm.get('addressInput').touched)">
               Please enter an address within Raleigh city limits
             </mat-error>
-            <mat-error
-            *ngIf="usersForm.controls.addressInput.hasError('maxlength')">
-            Maximum length is 150 characters
-          </mat-error>
+            <mat-error *ngIf="usersForm.controls.addressInput.hasError('maxlength')">
+              Maximum length is 150 characters
+            </mat-error>
           </mat-form-field>
           <!-- <span>Your choice is: {{usersForm.get('addressInput').value | json}}</span> -->
 
@@ -134,17 +133,21 @@
           </p>
           <p>
             <mat-form-field class="wide">
-              <textarea matInput type="text" maxlength="375" class="wide" formControlName="comments" placeholder="Comments"></textarea>
-              <mat-error
-                *ngIf="usersForm.controls.comments.hasError('maxlength')">
+              <textarea matInput type="text" maxlength="375" class="wide" formControlName="comments"
+                placeholder="Comments"></textarea>
+              <mat-error *ngIf="usersForm.controls.comments.hasError('maxlength')">
                 Maximum length is 375 characters
               </mat-error>
             </mat-form-field>
           </p>
         </form>
         <!-- <mat-progress-bar *ngIf="!isDone && submitted && !displayHttpError" class="app-progress" mode="indeterminate" -->
-        <mat-progress-bar *ngIf="submitted" class="app-progress" mode="indeterminate"
+        <mat-progress-bar *ngIf="submitted && !error" class="app-progress" mode="indeterminate"
           aria-label="Indeterminate progress-bar example"></mat-progress-bar>
+        <mat-error *ngIf="error">
+          There was a problem communicating to the backend server. We are working on correcting the issue. Please try
+          your request again later.
+        </mat-error>
         <span *ngIf="reqid">Your service request ID is {{reqid}}. Your {{problemSidDisplay}} will be collected
           within two business days, not including weekends. Your container(s) must be at the curb from
           7am to 5pm each day until collected. We apologize for any inconvenience.</span>
@@ -175,12 +178,17 @@
         </mat-form-field>
         <br>
         <br>
-        <mat-progress-bar *ngIf="ckSrStatussubmitted" class="app-progress" mode="indeterminate"
+        <mat-progress-bar *ngIf="ckSrStatussubmitted && !error" class="app-progress" mode="indeterminate"
           aria-label="Indeterminate progress-bar example">
         </mat-progress-bar>
+        <mat-error *ngIf="error">
+          There was a problem communicating to the backend server. We are working on correcting the issue. Please try
+          your request again later.
+        </mat-error>
         <p *ngIf="srNotFound && !srStatus">Could not find any Service Requests with that ID.</p>
         <p *ngIf="srStatus">You Service Request is in '{{srStatus}}' status.</p>
-        <div *ngIf="srStatus != 'Completed' && srStatus && srStatus != 'CLOSED' && srStatus != 'Cancelled'">Your requested
+        <div *ngIf="srStatus != 'Completed' && srStatus && srStatus != 'CLOSED' && srStatus != 'Cancelled'">Your
+          requested
           item will be
           collected within two business days, not including weekends.</div>
       </form>
