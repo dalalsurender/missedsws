@@ -20,6 +20,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { TitleCasePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatProgressBarModule
   ],
   entryComponents: [DialogContentComponent],
-  providers: [CityworksService, ArcgisService],
+  providers: [CityworksService, ArcgisService, TitleCasePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

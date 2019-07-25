@@ -4,12 +4,14 @@ import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http'
 import { catchError, map } from 'rxjs/operators';
 import { GeoResponse } from './geo-response';
 import { Collectionareas } from './collectionareas';
+import { GeoResponseSws } from './geo-response-sws';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArcgisService {
   coordinates: any;
+  swsLocatorUrl = 'https://services.arcgis.com/v400IkDOw1ad7Yad/ArcGIS/rest/services/Solid_Waste_Collection/FeatureServer/1/query';
 
   constructor(private http: HttpClient) { }
 
@@ -49,6 +51,17 @@ export class ArcgisService {
   //   }).pipe(
   //     catchError(this.handleError));
   // }
+
+  geocodesws(address): Observable<GeoResponseSws> {
+    address = `ADDRESS like '${address}%'`;
+    const params = new HttpParams()
+      .append('Where', address).append('outSR', '2264').append('f', 'json').append('returnGeometry', 'true').append('outFields', '*');
+
+    return this.http.get<GeoResponseSws>(this.swsLocatorUrl, {
+      params
+    }).pipe(
+      catchError(this.handleError));
+  }
 
   geocode(address): Observable<GeoResponse> {
     const params = new HttpParams()

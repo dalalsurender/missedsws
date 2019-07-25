@@ -11,8 +11,11 @@ import { CityworksSrRequest } from './cityworks-sr-request';
 import { MatDialog } from '@angular/material';
 import { DialogContentComponent } from './dialog-content/dialog-content.component';
 import * as moment from 'moment';
-import { Feature } from './collectionareas';
+// import { Feature } from './collectionareas';
+import { TitleCasePipe } from '@angular/common';
+
 import { WorldGeoResponse } from './world-geo-response';
+import { GeoResponseSws, Feature } from './geo-response-sws';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +26,8 @@ export class AppComponent implements OnInit {
   isOdd: boolean;
   recycleDay: Feature[] = [];
   isLoading: boolean;
-  filteredAddresses: Candidate[] = [];
+  filteredAddresses: Feature[] = [];
+  // filteredAddresses: Candidate[] = [];
   usersForm: FormGroup;
   subForm: FormGroup;
   problemSidDisplay: any;
@@ -56,7 +60,7 @@ export class AppComponent implements OnInit {
   isNotRecyclingWeek: boolean;
 
   constructor(private _dialog: MatDialog, private cityworksService: CityworksService,
-    private arcgisService: ArcgisService, private fb: FormBuilder) { }
+    private arcgisService: ArcgisService, private fb: FormBuilder, private titlecasePipe: TitleCasePipe) { }
 
   ngOnInit(): void {
 
@@ -76,7 +80,7 @@ export class AppComponent implements OnInit {
       problemSid: [null, Validators.required],
       callerHomePhone: [null, [Validators.required, Validators.pattern(PHONE_REGEX)]],
       callerEmail: [null, Validators.email],
-      comments: ['', Validators.maxLength(374)]
+      comments: ['', Validators.maxLength(799)]
     });
 
     this.usersForm
@@ -88,7 +92,7 @@ export class AppComponent implements OnInit {
           this.isLoading = true;
           this.addressNotFound = false;
         }),
-        switchMap(value => this.arcgisService.geocode(value)
+        switchMap(value => this.arcgisService.geocodesws(value)
           .pipe(
             finalize(() => {
               this.isLoading = false;
@@ -96,31 +100,33 @@ export class AppComponent implements OnInit {
           )
         )
       ).subscribe(data => {
-        this.filteredAddresses = data.candidates;
-        this.location = this.usersForm.get('addressInput').value.location;
-        this.arcgisService.getTrashDay(this.location).subscribe(
-          collectionDay => {
-            if (collectionDay.features.length === 1) {
-              this.day = collectionDay.features[0].attributes.DAY;
-              this.week = collectionDay.features[0].attributes.WEEK;
-              if (this.week === 'A' && this.isOdd) {
-                this.isRecyclingWeek = 'This week is your Recycling week. Your recycling week is week';
-                this.isNotRecyclingWeek = false;
-              } else if (this.week === 'B' && !this.isOdd) {
-                this.isRecyclingWeek = 'This week is your Recycling week. Your recycling week is week';
-                this.isNotRecyclingWeek = false;
-              } else if (this.week === undefined) {
-                this.isRecyclingWeek = 'This week is not your Recycling week';
-                this.isNotRecyclingWeek = true;
-              } else {
-                this.isRecyclingWeek = 'This week is not your Recycling week. Your recycling week is week';
-                this.isNotRecyclingWeek = true;
-              }
-            } else {
-              this.addressNotFound = true;
-              this.day = undefined;
-            }
-          });
+        // this.filteredAddresses = data.candidates;
+        this.filteredAddresses = data.features;
+        // this.location = this.usersForm.get('addressInput').value.location;
+        console.log('the filteredAddresses is ', this.filteredAddresses);
+        // this.arcgisService.getTrashDay(this.location).subscribe(
+        //   collectionDay => {
+        //     if (collectionDay.features.length === 1) {
+        //       this.day = collectionDay.features[0].attributes.DAY;
+        //       this.week = collectionDay.features[0].attributes.WEEK;
+        //       if (this.week === 'A' && this.isOdd) {
+        //         this.isRecyclingWeek = 'This week is your Recycling week. Your recycling week is week';
+        //         this.isNotRecyclingWeek = false;
+        //       } else if (this.week === 'B' && !this.isOdd) {
+        //         this.isRecyclingWeek = 'This week is your Recycling week. Your recycling week is week';
+        //         this.isNotRecyclingWeek = false;
+        //       } else if (this.week === undefined) {
+        //         this.isRecyclingWeek = 'This week is not your Recycling week';
+        //         this.isNotRecyclingWeek = true;
+        //       } else {
+        //         this.isRecyclingWeek = 'This week is not your Recycling week. Your recycling week is week';
+        //         this.isNotRecyclingWeek = true;
+        //       }
+        //     } else {
+        //       this.addressNotFound = true;
+        //       this.day = undefined;
+        //     }
+        //   });
       });
 
     const numericOnly = '^(0|[1-9][0-9]*)$';
@@ -130,9 +136,34 @@ export class AppComponent implements OnInit {
 
   }
 
-  displayFn(address: Candidate) {
+  // displayFn(address: Candidate) {
+  //   if (address) {
+  //     return address.address;
+  //   }
+  // }
+
+  displayFn(address: Feature) {
     if (address) {
-      return address.address;
+
+      let titleCaseAddress = address.attributes.ADDRESS;
+      const titleCaseDay = address.attributes.SERVICEDAY;
+      this.day = this.titlecasePipe.transform(titleCaseDay);
+      this.week = address.attributes.RECYCLE.slice(-1);
+      if (this.week === 'A' && this.isOdd) {
+        this.isRecyclingWeek = 'This week is your Recycling week. Your recycling week is week';
+        this.isNotRecyclingWeek = false;
+      } else if (this.week === 'B' && !this.isOdd) {
+        this.isRecyclingWeek = 'This week is your Recycling week. Your recycling week is week';
+        this.isNotRecyclingWeek = false;
+      } else if (this.week === undefined) {
+        this.isRecyclingWeek = 'This week is not your Recycling week';
+        this.isNotRecyclingWeek = true;
+      } else {
+        this.isRecyclingWeek = 'This week is not your Recycling week. Your recycling week is week';
+        this.isNotRecyclingWeek = true;
+      }
+      titleCaseAddress = this.titlecasePipe.transform(titleCaseAddress);
+      return titleCaseAddress;
     }
   }
 

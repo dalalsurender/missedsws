@@ -100,13 +100,13 @@
           <span *ngIf="addressNotFound && day">Your address was not found. You can still continue to submit a service
             request.</span>
           <p>
-            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
               <mat-option *ngIf="isLoading" class="is-loading">
                 <mat-spinner diameter="40"></mat-spinner>
               </mat-option>
               <ng-container *ngIf="!isLoading">
-                <mat-option *ngFor="let address of filteredAddresses" [value]="address">
-                  <span>{{ address.address }}</span>
+                <mat-option *ngFor="let address of filteredAddresses" [value]="address" >
+                  <span>{{ address.attributes.ADDRESS | titlecase }}</span>
                 </mat-option>
               </ng-container>
             </mat-autocomplete>

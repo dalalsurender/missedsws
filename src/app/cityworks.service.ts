@@ -7,7 +7,6 @@ import { CityworksAuthResponse } from './cityworks-auth-response';
 import { CityworksValidateTokenResponse } from './cityworks-validate-token-response';
 import { environment } from './../environments/environment';
 
-
 @Injectable({
   providedIn: 'root'
 })

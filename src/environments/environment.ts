@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  user: `coraleigh/seeclickfix`,
-  password: `ts%dWLc%XaSB`
+  user: `coraleigh/cwsoa`,
+  password: `JknMaSgER5ev`
 };
 
 /*
